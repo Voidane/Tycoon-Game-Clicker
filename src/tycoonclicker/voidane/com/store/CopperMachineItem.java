@@ -1,6 +1,7 @@
 package tycoonclicker.voidane.com.store;
 
 import tycoonclicker.voidane.com.Graphics.TycoonGraphics;
+import tycoonclicker.voidane.com.Mechanics.Currency;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,10 +35,26 @@ public class CopperMachineItem extends JComponent {
 
         @Override
         public void mouseClicked(MouseEvent e) {
+
+            // Is the click inside bounds
             if (isEventInBounds(e)) {
+
+                // When player doesnt have enough money
+                if (Currency.getCurrency() < COST)
+                    return;
+
+                // Draw the lists of machines we bought into our inventory
                 List<Image> list = TycoonGraphics.getBoughtMachines();
                 list.add(new CopperMachineItem().getImage());
                 TycoonGraphics.setBoughtMachines(list);
+
+                // New currency total incom from machines
+                Currency.setCurrencyFromCopper(Currency.getCurrencyFromCopper() + 0.5);
+
+                // Subtract the currency from the player whic they just spent.
+                Currency.setCurrency(Currency.getCurrency()-COST);
+
+                // The price now rises for these machines
                 COST += COST / 10;
             }
         }

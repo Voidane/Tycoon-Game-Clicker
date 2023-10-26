@@ -1,6 +1,8 @@
 package tycoonclicker.voidane.com.Graphics;
 
 import tycoonclicker.voidane.com.JFrame.TycoonFrame;
+import tycoonclicker.voidane.com.Mechanics.Currency;
+import tycoonclicker.voidane.com.Mechanics.FactoryClicker;
 import tycoonclicker.voidane.com.store.CopperMachineItem;
 
 import javax.swing.*;
@@ -15,9 +17,12 @@ import java.util.List;
 public class TycoonGraphics extends JPanel implements ActionListener {
 
     private static final int PLOT_SIZE = 50;
-    private static final int DELAY =  100;
+
+    // 0.1 of a second
+    private static final int DELAY =  25;
     private static final int MAX_WIDTH_GAME_PANEL = 550;
     private static final int INVENTORY_BOARDER_Y = 750;
+    private static final int DELAY_DIVIDER = 80;
 
     private static List<Image> boughtMachines = new ArrayList<>();
     private boolean firstTimeRunning = true;
@@ -32,6 +37,7 @@ public class TycoonGraphics extends JPanel implements ActionListener {
         this.setFocusable(true);
         this.addKeyListener(new KeyRegister());
         this.addMouseListener(new CopperMachineItem.OnActionClick());
+        this.addMouseListener(new FactoryClicker());
         begin();
         System.out.println("Created");
     }
@@ -40,7 +46,7 @@ public class TycoonGraphics extends JPanel implements ActionListener {
      * Launches the game
      */
     private void begin() {
-        timer = new Timer(100, this);
+        timer = new Timer(DELAY, this);
         timer.start();
     }
 
@@ -50,6 +56,9 @@ public class TycoonGraphics extends JPanel implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
+        double currencyGain = Currency.getCurrency();
+        currencyGain = (currencyGain + (Currency.getCurrencyFromCopper()/DELAY_DIVIDER));
+        Currency.setCurrency(currencyGain);
         repaint();
     }
 
@@ -69,6 +78,9 @@ public class TycoonGraphics extends JPanel implements ActionListener {
         drawPanelDisplayStoreText(g);
         createCopperMachineForStore(g);
         addNewlyBoughtMachine(g);
+        drawCurrency(g);
+        drawFactoryClicker(g);
+        drawCurrencyPerSecond(g);
     }
 
     /**
@@ -123,11 +135,11 @@ public class TycoonGraphics extends JPanel implements ActionListener {
         CopperMachineItem machine = new CopperMachineItem();
         g.drawImage(machine.getImage(), MAX_WIDTH_GAME_PANEL + 20, INVENTORY_BOARDER_Y + 20,
                 75, 75, null);
-        g.setFont(new Font("Default", Font.BOLD, 20));
-        g.drawString("Copper Machine", MAX_WIDTH_GAME_PANEL + 20,
-                INVENTORY_BOARDER_Y + 20 + 100);
-        g.drawString("Cost: " + CopperMachineItem.COST , MAX_WIDTH_GAME_PANEL + 20,
-                INVENTORY_BOARDER_Y + 20 + 100 + 25);
+        g.setFont(new Font("Default", Font.BOLD, 15));
+        g.drawString("Copper Machine", MAX_WIDTH_GAME_PANEL + 100,
+                INVENTORY_BOARDER_Y + 20 + 20);
+        g.drawString("Cost: " + CopperMachineItem.COST , MAX_WIDTH_GAME_PANEL + 100,
+                INVENTORY_BOARDER_Y + 40  + 25);
     }
 
     private void addNewlyBoughtMachine(Graphics g) {
@@ -146,6 +158,28 @@ public class TycoonGraphics extends JPanel implements ActionListener {
                     PLOT_SIZE, PLOT_SIZE, null);
             xWidth += PLOT_SIZE;
         }
+    }
+
+    private void drawCurrency(Graphics g) {
+        double currency = Currency.getCurrency();
+        String formatCurrency = String.format("%,.2f", currency);
+        g.setFont(new Font("Default", Font.BOLD, 25));
+        g.setColor(Color.GREEN);
+        g.drawString("Currency: " + formatCurrency,MAX_WIDTH_GAME_PANEL + 10, 30);
+    }
+
+    private void drawFactoryClicker(Graphics g) {
+        FactoryClicker factoryClicker = new FactoryClicker();
+        g.drawImage(factoryClicker.getImage(),
+                (TycoonFrame.FRAME_WIDTH/2)-150 + (MAX_WIDTH_GAME_PANEL/2),
+                250, 300,300,null);
+    }
+
+    private void drawCurrencyPerSecond(Graphics g) {
+        g.setColor(Color.CYAN);
+        double x1 = Currency.getCurrencyFromCopper();
+        g.setFont(new Font("Default", Font.BOLD, 20));
+        g.drawString("Currency Per Hour: " + x1,MAX_WIDTH_GAME_PANEL + 10, 60);
     }
 
     public static List<Image> getBoughtMachines() {
