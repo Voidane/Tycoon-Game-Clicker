@@ -4,6 +4,7 @@ import tycoonclicker.voidane.com.JFrame.TycoonFrame;
 import tycoonclicker.voidane.com.Mechanics.Currency;
 import tycoonclicker.voidane.com.Mechanics.FactoryClicker;
 import tycoonclicker.voidane.com.store.CopperMachineItem;
+import tycoonclicker.voidane.com.store.MachineItem;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +28,7 @@ public class TycoonGraphics extends JPanel implements ActionListener {
     private static List<Image> boughtMachines = new ArrayList<>();
     private boolean firstTimeRunning = true;
 
+    public static List<MachineItem> machineItems = new ArrayList<>();
     private ImageIcon icon;
 
     Timer timer;
@@ -39,7 +41,6 @@ public class TycoonGraphics extends JPanel implements ActionListener {
         this.addMouseListener(new CopperMachineItem.OnActionClick());
         this.addMouseListener(new FactoryClicker());
         begin();
-        System.out.println("Created");
     }
 
     /**
@@ -81,6 +82,7 @@ public class TycoonGraphics extends JPanel implements ActionListener {
         drawCurrency(g);
         drawFactoryClicker(g);
         drawCurrencyPerSecond(g);
+        drawInstructions(g);
     }
 
     /**
@@ -142,22 +144,35 @@ public class TycoonGraphics extends JPanel implements ActionListener {
                 INVENTORY_BOARDER_Y + 40  + 25);
     }
 
+    /**
+     * Sets up our inventory with the correct corresponding machines.
+     */
     private void addNewlyBoughtMachine(Graphics g) {
 
         int yHeight = 0;
         int xWidth = 0;
-        CopperMachineItem machine = new CopperMachineItem();
+        int[] xCord = new int[11*21];
+        int[] yCord = new int[11*21];
 
         for ( int i = 0 ; i < boughtMachines.size() ; i++ ) {
 
+            MachineItem item = machineItems.get(i);
+            
             if (i % 11 == 0 && i != 0) {
                 yHeight += PLOT_SIZE;
                 xWidth = 0;
             }
-            g.drawImage(machine.getImage(), xWidth, yHeight,
+            
+            // Draw the image at the next open inventory slot
+            g.drawImage(item.getImage(), xWidth, yHeight,
                     PLOT_SIZE, PLOT_SIZE, null);
+            
+            // Assign locations of the grid to x y coordinates.
+            item.setXInv(xWidth, i);
+            item.setYInv(yHeight, i);
             xWidth += PLOT_SIZE;
         }
+        
     }
 
     private void drawCurrency(Graphics g) {
@@ -180,6 +195,18 @@ public class TycoonGraphics extends JPanel implements ActionListener {
         double x1 = Currency.getCurrencyFromCopper();
         g.setFont(new Font("Default", Font.BOLD, 20));
         g.drawString("Currency Per Hour: " + x1,MAX_WIDTH_GAME_PANEL + 10, 60);
+    }
+
+    private void drawInstructions(Graphics g) {
+        g.setColor(Color.white);
+        g.setFont(new Font("Default", Font.BOLD, 15));
+        g.drawString("Instructions: ", 1650,80);
+        g.drawString("Click factory to gain money", 1650,100);
+        g.drawString("Buy Items from store", 1650,120);
+    }
+
+    private void drawUpgradeIcon(Graphics g) {
+
     }
 
     public static List<Image> getBoughtMachines() {

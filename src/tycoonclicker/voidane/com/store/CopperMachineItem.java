@@ -8,14 +8,19 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 
-import static tycoonclicker.voidane.com.Graphics.TycoonGraphics.getBoughtMachines;
+public class CopperMachineItem extends JComponent implements MachineItem {
 
-public class CopperMachineItem extends JComponent {
-
+    // The image in the store X
     public static final int X_BEG = 570;
+    // The image in the store Y
     public static final int Y_BEG = 770;
+    // The size of the image
     public static final int SIZE = 75;
+    // Cost for a new copper machine
     public static int COST = 50;
+    // Track the x and y coordinate of all copper machines created in inventory.
+    private int[] xInv = new int[11*21];;
+    private int[] yInv = new int[11*21];;
 
     Image image;
 
@@ -27,36 +32,103 @@ public class CopperMachineItem extends JComponent {
         image = icon.getImage();
     }
 
+    @Override
     public Image getImage() {
         return image;
     }
 
-    public static class OnActionClick implements MouseListener {
+    @Override
+    public boolean haveEnoughMoney() {
+        if (Currency.getCurrency() >= COST)
+            return true;
+        return false;
+    }
+
+    @Override
+    public void setImagesAndClassInventory() {
+        // Draw the lists of machines we bought into our inventory
+        List<Image> list = TycoonGraphics.getBoughtMachines();
+        list.add(new CopperMachineItem().getImage());
+        TycoonGraphics.setBoughtMachines(list);
+
+        // The class that needs to implemented for the getimage interface and all other assets
+        TycoonGraphics.machineItems.add(new CopperMachineItem());
+    }
+
+    public void calculateCurrency() {
+        // New currency total income from machines
+        Currency.setCurrencyFromCopper(Currency.getCurrencyFromCopper() + 0.5);
+
+        // Subtract the currency from the player which they just spent.
+        Currency.setCurrency(Currency.getCurrency()-COST);
+
+        // Price raises for machine
+        COST += COST / 10;
+    }
+
+    @Override
+    public int getX_BEG() {
+        return X_BEG;
+    }
+
+    @Override
+    public int getY_BEG() {
+        return Y_BEG;
+    }
+
+    @Override
+    public int getIconSize() {
+        return SIZE;
+    }
+
+    @Override
+    public int getCost() {
+        return COST;
+    }
+
+    @Override
+    public int[] getXInv() {
+        return xInv;
+    }
+
+    @Override
+    public void setXInv(int x, int loc) {
+        this.xInv[loc] = x;
+    }
+
+    @Override
+    public int[] getYInv() {
+        return yInv;
+    }
+
+    @Override
+    public void setYInv(int y, int loc) {
+        this.yInv[loc] = y;
+    }
+
+    public static class OnActionClick extends CopperMachineItem implements MouseListener {
 
         @Override
         public void mouseClicked(MouseEvent e) {
 
-            // Is the click inside bounds
-            if (isEventInBounds(e)) {
-
+            // Is the click inside bounds of the store
+            if (isEventInBoundsOfStore(e)) {
                 // When player doesnt have enough money
-                if (Currency.getCurrency() < COST)
+                if (!haveEnoughMoney())
                     return;
-
-                // Draw the lists of machines we bought into our inventory
-                List<Image> list = TycoonGraphics.getBoughtMachines();
-                list.add(new CopperMachineItem().getImage());
-                TycoonGraphics.setBoughtMachines(list);
-
-                // New currency total incom from machines
-                Currency.setCurrencyFromCopper(Currency.getCurrencyFromCopper() + 0.5);
-
-                // Subtract the currency from the player whic they just spent.
-                Currency.setCurrency(Currency.getCurrency()-COST);
-
-                // The price now rises for these machines
-                COST += COST / 10;
+                // List of icons and classes that need to fill up the inventory
+                setImagesAndClassInventory();
+                // Adjust all currency and raise machine price
+                calculateCurrency();
             }
+
+            // Is the click inside bounds of the inventory
+            if (isEventInBoundsOfInventory(e)) {
+
+
+
+            }
+
         }
 
         @Override
@@ -75,12 +147,16 @@ public class CopperMachineItem extends JComponent {
         public void mouseExited(MouseEvent e) {
         }
 
-        private boolean isEventInBounds(MouseEvent e) {
+        private boolean isEventInBoundsOfStore(MouseEvent e) {
             // 1850, 100, 50, 50
             int x = e.getX();
             int y = e.getY();
 
             return (x >= X_BEG && y >= Y_BEG && x <= X_BEG+SIZE && y <= Y_BEG+SIZE);
+        }
+
+        private boolean isEventInBoundsOfInventory(MouseEvent e) {
+            return false;
         }
     }
 }
