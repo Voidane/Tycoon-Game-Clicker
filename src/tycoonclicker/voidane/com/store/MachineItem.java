@@ -21,12 +21,4 @@ public interface MachineItem {
 
     int getCost();
 
-    int[] getXInv();
-
-    void setXInv(int x, int loc);
-
-    int[] getYInv();
-
-    void setYInv(int y, int loc);
-
 }

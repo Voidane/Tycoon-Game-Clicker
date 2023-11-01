@@ -1,5 +1,6 @@
 package tycoonclicker.voidane.com.Graphics;
 
+import tycoonclicker.voidane.com.Inventory.Inventory;
 import tycoonclicker.voidane.com.JFrame.TycoonFrame;
 import tycoonclicker.voidane.com.Mechanics.Currency;
 import tycoonclicker.voidane.com.Mechanics.FactoryClicker;
@@ -15,6 +16,11 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Does all the drawing graphics for the game. Takes into account from other classes
+ * and repaints the methods in order to keep the game updated.
+ */
 public class TycoonGraphics extends JPanel implements ActionListener {
 
     private static final int PLOT_SIZE = 50;
@@ -151,8 +157,6 @@ public class TycoonGraphics extends JPanel implements ActionListener {
 
         int yHeight = 0;
         int xWidth = 0;
-        int[] xCord = new int[11*21];
-        int[] yCord = new int[11*21];
 
         for ( int i = 0 ; i < boughtMachines.size() ; i++ ) {
 
@@ -166,10 +170,9 @@ public class TycoonGraphics extends JPanel implements ActionListener {
             // Draw the image at the next open inventory slot
             g.drawImage(item.getImage(), xWidth, yHeight,
                     PLOT_SIZE, PLOT_SIZE, null);
-            
-            // Assign locations of the grid to x y coordinates.
-            item.setXInv(xWidth, i);
-            item.setYInv(yHeight, i);
+
+            Inventory.addNewInventoryItem(xWidth/PLOT_SIZE, yHeight/PLOT_SIZE, xWidth, yHeight, item);
+
             xWidth += PLOT_SIZE;
         }
         
@@ -203,10 +206,6 @@ public class TycoonGraphics extends JPanel implements ActionListener {
         g.drawString("Instructions: ", 1650,80);
         g.drawString("Click factory to gain money", 1650,100);
         g.drawString("Buy Items from store", 1650,120);
-    }
-
-    private void drawUpgradeIcon(Graphics g) {
-
     }
 
     public static List<Image> getBoughtMachines() {

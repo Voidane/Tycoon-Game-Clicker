@@ -2,7 +2,7 @@ package tycoonclicker.voidane.com.Mechanics;
 
 public class Currency {
 
-    private static double currency;
+    private static double currency = 1000;
     private static double currencyFromCopper;
     private static double currencyPerClick = 1;
 

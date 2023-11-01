@@ -27,8 +27,8 @@ public class FactoryClicker implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("ye");
         if (IsInBoundClick(e)) {
+
             double curr = Currency.getCurrency();
             curr += Currency.getCurrencyPerClick();
             Currency.setCurrency(curr);

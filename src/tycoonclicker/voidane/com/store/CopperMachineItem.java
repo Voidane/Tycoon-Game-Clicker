@@ -6,6 +6,7 @@ import tycoonclicker.voidane.com.Mechanics.Currency;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CopperMachineItem extends JComponent implements MachineItem {
@@ -18,9 +19,9 @@ public class CopperMachineItem extends JComponent implements MachineItem {
     public static final int SIZE = 75;
     // Cost for a new copper machine
     public static int COST = 50;
-    // Track the x and y coordinate of all copper machines created in inventory.
-    private int[] xInv = new int[11*21];;
-    private int[] yInv = new int[11*21];;
+    // The size of the icon in the inventory
+    public static int INV_SIZE = 50;
+
 
     Image image;
 
@@ -86,25 +87,6 @@ public class CopperMachineItem extends JComponent implements MachineItem {
         return COST;
     }
 
-    @Override
-    public int[] getXInv() {
-        return xInv;
-    }
-
-    @Override
-    public void setXInv(int x, int loc) {
-        this.xInv[loc] = x;
-    }
-
-    @Override
-    public int[] getYInv() {
-        return yInv;
-    }
-
-    @Override
-    public void setYInv(int y, int loc) {
-        this.yInv[loc] = y;
-    }
 
     public static class OnActionClick extends CopperMachineItem implements MouseListener {
 
@@ -113,7 +95,7 @@ public class CopperMachineItem extends JComponent implements MachineItem {
 
             // Is the click inside bounds of the store
             if (isEventInBoundsOfStore(e)) {
-                // When player doesnt have enough money
+                // When player doesn't have enough money
                 if (!haveEnoughMoney())
                     return;
                 // List of icons and classes that need to fill up the inventory
@@ -121,14 +103,6 @@ public class CopperMachineItem extends JComponent implements MachineItem {
                 // Adjust all currency and raise machine price
                 calculateCurrency();
             }
-
-            // Is the click inside bounds of the inventory
-            if (isEventInBoundsOfInventory(e)) {
-
-
-
-            }
-
         }
 
         @Override
@@ -153,10 +127,6 @@ public class CopperMachineItem extends JComponent implements MachineItem {
             int y = e.getY();
 
             return (x >= X_BEG && y >= Y_BEG && x <= X_BEG+SIZE && y <= Y_BEG+SIZE);
-        }
-
-        private boolean isEventInBoundsOfInventory(MouseEvent e) {
-            return false;
         }
     }
 }
